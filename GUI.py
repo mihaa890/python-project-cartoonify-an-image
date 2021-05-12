@@ -1,17 +1,17 @@
 import tkinter as tk
-from tkinter import NW
+from tkinter.ttk import Label
 
 import cv2
 
 import instructions as instructions
+import numpy
 from PIL import Image,ImageTk
-from tkinter.filedialog import askopenfile
+from tkinter import filedialog
 
-from PIL.ImageTk import PhotoImage
 
 root = tk.Tk()
 
-logo = Image.open('logo.png')
+logo = Image.open('images/logo.png')
 logo = ImageTk.PhotoImage(logo)
 logo_label = tk.Label(image=logo)
 
@@ -20,19 +20,24 @@ logo_label.grid(column=1,row=0)
 
 def upload():
     browse.set("loading...")
-    file = askopenfile(parent=root,mode="rb",title="Choose an image",filetypes =[("JPG file","*.jpg"),("PNG file","*.png"),("JPEG file","*.jpeg"),("All files","*.")])
-    if file:
 
-        # photo = PhotoImage(file=file)
-        # gray = cv2.cvtColor(src, cv2.COLOR_RGB2GRAY)
-        # gray = cv2.medianBlur(gray, 5)
-        # edges = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 9)
-        # color = cv2.bilateralFilter(photo,9,250,250)
-        photo = Image.open(file)
-        gray = photo.convert("L").save("gray.jpg")
-        photo = ImageTk.PhotoImage(photo)
-        label = tk.Label(image=photo)
-        label.image = gray
+    path = tk.filedialog.askopenfilename()
+    # file = askopenfile(parent=root,mode="rb",title="Choose an image",filetypes =[("JPG file","*.jpg"),("PNG file","*.png"),("JPEG file","*.jpeg"),("All files",".*")])
+    if len(path) > 0:
+        image = cv2.imread(path)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        edged = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 9)
+        color = cv2.bilateralFilter(image, 9, 250, 250)
+        cartoon = cv2.bitwise_and(color, color, mask=edged)
+        #format
+        cartoon = Image.fromarray(cartoon)
+        cartoon = ImageTk.PhotoImage(cartoon)
+
+
+        panel = Label(root,image = cartoon)
+        panel.grid(column=1, row=3)
+        label = tk.Label(image=cartoon)
+        label.image = cartoon
         label.grid(row=3, column=1, padx=5, pady=5)
 
 
