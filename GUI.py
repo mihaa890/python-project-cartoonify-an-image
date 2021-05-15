@@ -3,8 +3,6 @@ from tkinter.ttk import Label
 
 import cv2
 
-import instructions as instructions
-import numpy
 from PIL import Image,ImageTk
 from tkinter import filedialog
 
@@ -41,8 +39,7 @@ def upload():
         label.grid(row=3, column=1, padx=5, pady=5)
 
 
-intructions = tk.Label(root,text= "Select an image",font = "Raleway")
-instructions.grid(columnspan=3,column=0,row=1)
+
 
 
 browse = tk.StringVar()
