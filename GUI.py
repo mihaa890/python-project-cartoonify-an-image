@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(940, 894)
+        MainWindow.resize(940, 908)
         MainWindow.setMinimumSize(QtCore.QSize(844, 0))
         MainWindow.setStyleSheet("background-color:#fff;")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -41,6 +41,8 @@ class Ui_MainWindow(object):
         self.file_input_field.setObjectName("file_input_field")
         self.horizontalLayout_2.addWidget(self.file_input_field)
         self.browse_button = QtWidgets.QPushButton(self.browse_box)
+        self.browse_button.setMinimumSize(QtCore.QSize(0, 20))
+        self.browse_button.setMaximumSize(QtCore.QSize(80, 30))
         self.browse_button.setStyleSheet("background-color: #0078d7;\n"
 "border : 0;\n"
 "color : #fff;\n"

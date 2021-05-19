@@ -1,3 +1,5 @@
+from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5 import QtGui, QtCore
 import gui
@@ -11,6 +13,8 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
 
     def __init__(self):
         super().__init__()
+        self.movie = QMovie("resources/loading.gif")
+        self.timer = QTimer()
         self.setupUi(self)
         self.constants = Constants()
 
@@ -71,22 +75,19 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
                 self.current_threshold_adaptive_method = cv2.ADAPTIVE_THRESH_GAUSSIAN_C
             elif value == self.constants.THRESHOLD_ADAPTIVE_METHODS.ADAPTIVE_THRESH_MEAN_C:
                 self.current_threshold_adaptive_method = cv2.ADAPTIVE_THRESH_MEAN_C
-
         elif dropdown_type == self.constants.DROPDOWN_TYPES.THRESHOLD_TYPE:
             if value == self.constants.THRESHOLD_TYPES.THRESH_BINARY:
                 self.current_threshold_type = cv2.THRESH_BINARY
-            elif value == self.constants.THRESHOLD_TYPES.THRESH_TRUNC:
-                self.current_threshold_type = cv2.THRESH_TRUNC
-            elif value == self.constants.THRESHOLD_TYPES.THRESH_TOZERO:
-                self.current_threshold_type = cv2.THRESH_TOZERO
-            elif value == self.constants.THRESHOLD_TYPES.THRESH_TOZERO_INV:
-                self.current_threshold_type = cv2.THRESH_TOZERO_INV
             elif value == self.constants.THRESHOLD_TYPES.THRESH_BINARY_INV:
                 self.current_threshold_type = cv2.THRESH_BINARY_INV
 
         self.debouncedProcess()
 
     def on_slider_change(self, slider_type, value):
+        self.after_img.setMovie(self.movie)
+        timer = QTimer()
+        self.startAnimation()
+        timer.singleShot(1000, self.processCv2Image)
         if slider_type == self.constants.SLIDERS_TYPES.THRESHOLD_BLOCK_SIZE_SLIDER:
             actual_value = (value*2) + 1
             self.threshold_block_size_label.setText('BlockSize: {}'.format(actual_value))
@@ -126,9 +127,16 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
         path = name[0]
         cv2.imwrite(path, cv2.cvtColor(self.final_image, cv2.COLOR_RGB2BGR))
 
-    @debounce(1)
+    @debounce(0.35)
     def debouncedProcess(self):
         self.processCv2Image()
+
+    def startAnimation(self):
+        self.movie.start()
+
+    def stopAnimation(self):
+        self.movie.stop()
+        self.close()
 
     def processCv2Image(self):
         cv2_image = cv2.imread(self.current_path)
@@ -170,7 +178,6 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
 def main():
     app = QApplication(sys.argv)
     gui = GUI()
-
     gui.show()
     app.exec_()
 

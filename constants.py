@@ -16,9 +16,7 @@ class ThresholdTypes:
     def __init__(self):
         self.THRESH_BINARY = 'THRESH_BINARY'
         self.THRESH_BINARY_INV = 'THRESH_BINARY_INV'
-        self.THRESH_TRUNC = 'THRESH_TRUNC'
-        self.THRESH_TOZERO = 'THRESH_TOZERO'
-        self.THRESH_TOZERO_INV = 'THRESH_TOZERO_INV'
+
 
     def _all(cls):
         return [i for i in dir(cls) if not i.startswith('__') and not i.startswith('_')]

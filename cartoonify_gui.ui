@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>940</width>
-    <height>894</height>
+    <height>908</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -75,6 +75,18 @@
        </item>
        <item>
         <widget class="QPushButton" name="browse_button">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>30</height>
+          </size>
+         </property>
          <property name="styleSheet">
           <string notr="true">background-color: #0078d7;
 border : 0;
