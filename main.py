@@ -1,8 +1,8 @@
+import gui
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5 import QtGui, QtCore
-import gui
 import sys
 import cv2
 from debounce import debounce
@@ -37,7 +37,6 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
             self.build_parameters_box.setEnabled(False)
             self.result_box.setEnabled(False)
             self.download_button.setEnabled(False)
-
 
     def buildDropdowns(self):
         self.threshold_adaptive_method_dropdown.clear()
@@ -89,7 +88,7 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
         self.startAnimation()
         timer.singleShot(1000, self.processCv2Image)
         if slider_type == self.constants.SLIDERS_TYPES.THRESHOLD_BLOCK_SIZE_SLIDER:
-            actual_value = (value*2) + 1
+            actual_value = (value * 2) + 1
             self.threshold_block_size_label.setText('BlockSize: {}'.format(actual_value))
             self.current_threshold_block_size = actual_value
         elif slider_type == self.constants.SLIDERS_TYPES.THRESHOLD_DISTANCE_SLIDER:
@@ -123,7 +122,7 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
 
     def download(self):
         filter = "Images (*.png *.jpg)"
-        name = QFileDialog.getSaveFileName(self, 'Save File',None, filter)
+        name = QFileDialog.getSaveFileName(self, 'Save File', None, filter)
         path = name[0]
         cv2.imwrite(path, cv2.cvtColor(self.final_image, cv2.COLOR_RGB2BGR))
 
