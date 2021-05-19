@@ -12,6 +12,7 @@ class DropdownTypes:
         self.THRESHOLD_TYPE = 'THRESHOLD_TYPE'
 
 
+
 class ThresholdTypes:
     def __init__(self):
         self.THRESH_BINARY = 'THRESH_BINARY'
