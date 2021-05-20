@@ -1,3 +1,5 @@
+from flatbuffers.builder import np
+
 import gui
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QMovie
@@ -79,6 +81,8 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
                 self.current_threshold_type = cv2.THRESH_BINARY
             elif value == self.constants.THRESHOLD_TYPES.THRESH_BINARY_INV:
                 self.current_threshold_type = cv2.THRESH_BINARY_INV
+            if value == self.constants.THRESHOLD_ADAPTIVE_METHODS.TERM_CRITERIA_EPS:
+                self.current_threshold_adaptive_method = cv2.TERM_CRITERIA_EPS
 
         self.debouncedProcess()
 
@@ -113,7 +117,8 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
             self.file_input_field.setText(self.current_path)
             self.before_img.setPixmap(
                 QtGui.QPixmap(self.file_input_field.text()).scaled(511, 431, QtCore.Qt.AspectRatioMode.KeepAspectRatio))
-            self.processCv2Image()
+            # self.processCv2Image()
+            self.processCv2Image__()
             self.build_parameters_box.setEnabled(True)
             self.result_box.setEnabled(True)
             self.download_button.setEnabled(True)
@@ -128,7 +133,8 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
 
     @debounce(0.35)
     def debouncedProcess(self):
-        self.processCv2Image()
+        # self.processCv2Image()
+        self.processCv2Image__()
 
     def startAnimation(self):
         self.movie.start()
@@ -137,41 +143,62 @@ class GUI(QMainWindow, gui.Ui_MainWindow):
         self.movie.stop()
         self.close()
 
-    def processCv2Image(self):
-        cv2_image = cv2.imread(self.current_path)
-        cv2_image = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2RGB)
+    # def processCv2Image(self):
+    #     cv2_image = cv2.imread(self.current_path)
+    #     cv2_image = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2RGB)
+    #
+    #     print(
+    #         self.current_threshold_block_size,
+    #         self.current_threshold_distance,
+    #         self.current_bilateral_filter_distance,
+    #         self.current_sigma_color,
+    #         self.current_sigma_space)
+    #
+    #     gray = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2GRAY)
+    #     edged = cv2.adaptiveThreshold(
+    #         gray,
+    #         255,
+    #         self.current_threshold_adaptive_method,
+    #         self.current_threshold_type,
+    #         self.current_threshold_block_size,
+    #         self.current_threshold_distance
+    #     )
+    #
+    #     color = cv2.bilateralFilter(
+    #         cv2_image,
+    #         self.current_bilateral_filter_distance,
+    #         self.current_sigma_color,
+    #         self.current_sigma_space
+    #     )
+    #
+    #     self.final_image = cv2.bitwise_and(color, color, mask=edged)
+    #
+    #     height, width, channel = self.final_image.shape
+    #     bytesPerLine = 3 * width
+    #     qImg = QtGui.QImage(self.final_image.data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
+    #
+    #     self.after_img.setPixmap(
+    #         QtGui.QPixmap.fromImage(qImg).scaled(511, 431, QtCore.Qt.AspectRatioMode.KeepAspectRatio))
+    def processCv2Image__(self):
+        image = cv2.imread(self.current_path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        Z = image.reshape((-1, 3))
+        Z = np.float32(Z)
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+        # K = 8
+        ret, label, center = cv2.kmeans(Z, self.current_threshold_distance, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        center = np.uint8(center)
+        self.res = center[label.flatten()]
+        self.res2 = self.res.reshape((image.shape))
 
-        print(
-            self.current_threshold_block_size,
-            self.current_threshold_distance,
-            self.current_bilateral_filter_distance,
-            self.current_sigma_color,
-            self.current_sigma_space)
-
-        gray = cv2.cvtColor(cv2_image, cv2.COLOR_BGR2GRAY)
-        edged = cv2.adaptiveThreshold(
-            gray,
-            255,
-            self.current_threshold_adaptive_method,
-            self.current_threshold_type,
-            self.current_threshold_block_size,
-            self.current_threshold_distance
-        )
-
-        color = cv2.bilateralFilter(
-            cv2_image,
-            self.current_bilateral_filter_distance,
-            self.current_sigma_color,
-            self.current_sigma_space)
-
-        self.final_image = cv2.bitwise_and(color, color, mask=edged)
-
-        height, width, channel = self.final_image.shape
+        height, width, channel = self.res2.shape
         bytesPerLine = 3 * width
-        qImg = QtGui.QImage(self.final_image.data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
+        qImg = QtGui.QImage(self.res2.data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
 
         self.after_img.setPixmap(
-            QtGui.QPixmap.fromImage(qImg).scaled(511, 431, QtCore.Qt.AspectRatioMode.KeepAspectRatio))
+                QtGui.QPixmap.fromImage(qImg).scaled(511, 431, QtCore.Qt.AspectRatioMode.KeepAspectRatio))
+
+
 
 
 def main():
