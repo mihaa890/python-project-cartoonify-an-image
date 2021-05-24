@@ -6,12 +6,11 @@ class SlidersTypes:
         self.BILATERAL_FILTER_SIGMA_COLOR_SLIDER = 'BILATERAL_FILTER_SIGMA_COLOR_SLIDER'
         self.BILATERAL_FILTER_SIGMA_SPACE_SLIDER = 'BILATERAL_FILTER_SIGMA_SPACE_SLIDER'
 
+
 class DropdownTypes:
     def __init__(self):
         self.ADAPTIVE_METHOD = 'ADAPTIVE_METHOD'
         self.THRESHOLD_TYPE = 'THRESHOLD_TYPE'
-
-
 
 class ThresholdTypes:
     def __init__(self):
@@ -26,6 +25,7 @@ class ThresholdAdaptiveMethods:
     def __init__(self):
         self.ADAPTIVE_THRESH_MEAN_C = 'ADAPTIVE_THRESH_MEAN_C'
         self.ADAPTIVE_THRESH_GAUSSIAN_C = 'ADAPTIVE_THRESH_GAUSSIAN_C'
+        self.TERM_CRITERIA_EPS = 'TERM_CRITERIA_EPS'
 
     def _all(cls):
         return [i for i in dir(cls) if not i.startswith('__') and not i.startswith('_')]
